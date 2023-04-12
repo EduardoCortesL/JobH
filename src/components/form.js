@@ -6,14 +6,30 @@ const Form = () => {
   const [jobDescription, setJobDescription] = useState('');
   const [resume, setResume] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
+
+    const data = new FormData();
+    data.append('name', name);
+    data.append('companyName', companyName);
+    data.append('jobDescription', jobDescription);
+    data.append('resume', resume);
+
+    console.log(data)
+
+    const res = await fetch('/api/gpt', {
+      method: 'POST',
+      body: data,
+    });
+
+    const result = await res.json();
+
+    console.log(result);
   };
 
   return (
     <form onSubmit={handleSubmit} className="form-container">
-      <h2></h2>
+      <h2>Get Cover letter</h2>
       <div className="form-group">
         <label htmlFor="name">Name:</label>
         <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
