@@ -1,37 +1,55 @@
 export default async function handler(req, res) {
-    const { name, companyName, jobDescription, resume } = req.body;
+    if (req.method === 'POST') {
+      try {
+        const formData = req.body;
+        const name = formData.name;
+        const companyName = formData.companyName;
+        const jobDescription = formData.jobDescription;
+        const cLetterPrompt = formData.cLetterPrompt;
+        //const resume = formData.get('resume');
+        //console.log(formData.jobDescription)
+        var raw = JSON.stringify({
+            "model": "gpt-3.5-turbo",
+            "messages": [
+              {
+                "role": "system",
+                "content": cLetterPrompt
+              },
+              {
+                "role": "user",
+                "content": `Company Name: ${companyName} Job Description: ${jobDescription}.`
+              }
+            ],
+            "temperature": 1,
+            "top_p": 1,
+            "n": 1,
+            "stream": false,
+            "max_tokens": 1000,
+            "presence_penalty": 0,
+            "frequency_penalty": 0
+          });
+
   
-    // create the data object to send to the API
-    const data = {
-      context: `${name} works for ${companyName} and is interested in the following job: ${jobDescription}`,
-      resume: resume
-    };
+        // Make API call to Chat GPT
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            "Accept": "application/json",
+            "Authorization": "Bearer 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", // replace with your own API key
+          },
+          body: raw,
+        });
   
-    // make the API call using fetch
-    try {
-      const response = await fetch('https://api.openai.com/v1/engine/your-engine-id/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          prompt: 'The following is a cover letter written for a job application. Please complete the letter with appropriate content.',
-          max_tokens: 1024,
-          temperature: 0.7,
-          n: 1,
-          stop: ['Thank you for your time.', 'Sincerely,']
-        })
-      });
-  
-      const { choices } = await response.json();
-      const { text } = choices[0];
-  
-      // send the generated text back to the client
-      res.status(200).json({ coverLetter: text });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Something went wrong' });
+        const data = await response.json();
+        console.log(data.choices[0].message.content)
+        res.status(200).json({ coverLetter: data.choices[0].message.content });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Something went wrong' });
+      }
+    } else {
+      res.status(405).json({ message: 'Method not allowed' });
     }
   }
   
