@@ -36,13 +36,13 @@ export default async function handler(req, res) {
           headers: {
             'Content-Type': 'application/json',
             "Accept": "application/json",
-            "Authorization": "Bearer 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", // replace with your own API key
+            "Authorization": process.env.API_KEY, // replace with your own API key
           },
           body: raw,
         });
   
         const data = await response.json();
-        console.log(data.choices[0].message.content)
+        //console.log(data.choices[0].message.content)
         res.status(200).json({ coverLetter: data.choices[0].message.content });
       } catch (error) {
         console.error(error);
