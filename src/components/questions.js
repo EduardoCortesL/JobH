@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 
-const FormComponent = () => {
+const QuestionsComponent = () => {
   const [name, setName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [jobDescription, setJobDescription] = useState('');
@@ -37,7 +37,7 @@ const FormComponent = () => {
 
   return (
     <form onSubmit={handleSubmit} className="form-container">
-      <h2>Get Cover letter</h2>
+      <h2>Get Practice Questions</h2>
       <div className="form-group">
         <label htmlFor="name">Name:</label>
         <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
@@ -65,4 +65,4 @@ const FormComponent = () => {
   );
 };
 
-export default FormComponent;
+export default QuestionsComponent;
