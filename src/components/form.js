@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import CoverLetterResponse from './cLetterResponse';
 
 
 const FormComponent = () => {
@@ -7,6 +8,7 @@ const FormComponent = () => {
   const [jobDescription, setJobDescription] = useState('');
   const [resume, setResume] = useState(null);
   const [coverLetter, setCoverLetter] = useState(null);
+  const [showForm, setShowForm] = useState(true);  
   const cLetterPrompt = "You are a cover letter generator.You will be given a job description along with the job applicant's resume.You will write a cover letter for the applicant that matches their past experiences from the resume with the job description.rather than simply outlining the applicant's past experiences, you will give more detail and explain how those experiences will help the applicant succeed in the new job.You will write the cover letter in a modern, professional style without being too formal, as a software developer might do naturally."
   
   
@@ -18,7 +20,7 @@ const FormComponent = () => {
       companyName,
       jobDescription,
       cLetterPrompt,
-      resumeText,
+      //resumeText,
     };
     console.log(requestBody);
   
@@ -32,10 +34,14 @@ const FormComponent = () => {
   
     const result = await res.json();
     setCoverLetter(result.coverLetter);
+    setShowForm(false);
+
   };
   
 
   return (
+    <div>
+      {showForm ? ( 
     <form onSubmit={handleSubmit} className="form-container">
       <h2>Get Cover letter</h2>
       <div className="form-group">
@@ -55,13 +61,13 @@ const FormComponent = () => {
         <input type="file" id="resume" onChange={(e) => setResume(e.target.files[0])} />
       </div>
       <button type="submit">Submit</button>
-      {coverLetter && (
+      </form>
+      ) : (
         <div>
-          <h2>Generated Cover Letter:</h2>
-          <p>{coverLetter}</p>
+          <CoverLetterResponse value={coverLetter}/>
         </div>
-      )}
-    </form>
+      ) }
+    </div>
   );
 };
 
