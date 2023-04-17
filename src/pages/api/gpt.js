@@ -5,19 +5,18 @@ export default async function handler(req, res) {
         const name = formData.name;
         const companyName = formData.companyName;
         const jobDescription = formData.jobDescription;
-        const cLetterPrompt = formData.cLetterPrompt;
-        //const resume = formData.get('resume');
-        //console.log(formData.jobDescription)
+        const guidePrompt = formData.guidePrompt;
+        const resume = formData.resume;
         var raw = JSON.stringify({
             "model": "gpt-3.5-turbo",
             "messages": [
               {
                 "role": "system",
-                "content": cLetterPrompt
+                "content": guidePrompt
               },
               {
                 "role": "user",
-                "content": `Company Name: ${companyName} Job Description: ${jobDescription}.`
+                "content": `My Name: ${name}, Company Name: ${companyName}, Job Description: ${jobDescription}, My Resume ${resume}`
               }
             ],
             "temperature": 1,

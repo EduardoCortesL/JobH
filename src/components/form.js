@@ -9,7 +9,7 @@ const FormComponent = () => {
   const [jobDescription, setJobDescription] = useState('');
   const [coverLetter, setCoverLetter] = useState(null);
   const [showForm, setShowForm] = useState(true);
-  const cLetterPrompt = "You are a cover letter generator.You will be given a job description along with the job applicant's resume.You will write a cover letter for the applicant that matches their past experiences from the resume with the job description.rather than simply outlining the applicant's past experiences, you will give more detail and explain how those experiences will help the applicant succeed in the new job.You will write the cover letter in a modern, professional style without being too formal, as a software developer might do naturally."
+  const guidePrompt = "You are a cover letter generator.You will be given a job description along with the job applicant's resume.You will write a cover letter for the applicant that matches their past experiences from the resume with the job description.rather than simply outlining the applicant's past experiences, you will give more detail and explain how those experiences will help the applicant succeed in the new job.You will write the cover letter in a modern, professional style without being too formal, as a software developer might do naturally."
 
 
   const handleSubmit = async (e) => {
@@ -25,12 +25,11 @@ const FormComponent = () => {
       base64String = reader.result.split(',')[1];
       loadPdf(base64String)
         .then((text) => {
-          console.log(text);
           const requestBody = {
             name,
             companyName,
             jobDescription,
-            cLetterPrompt,
+            guidePrompt,
             resume: text,
           };
           console.log(requestBody);
