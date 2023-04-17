@@ -91,3 +91,15 @@ button[type="submit"] {
   cursor: pointer;
   text-decoration: none;
 }
+
+.alert {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: red;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 9999;
+}
