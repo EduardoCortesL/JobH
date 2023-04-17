@@ -15,8 +15,10 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Navbar/>
       <main>
-        <Navbar/>
+      <h1>Welcome to JobH</h1>
+      <p>JobH is a tool to help your prep for your next job. Currently is in Alpha mode</p>
       </main>
     </>
   )
