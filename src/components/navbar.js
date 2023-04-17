@@ -5,14 +5,14 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="nav-container">
         <Link href="/">
-          <p className="logo">My App</p>
+          <p className="logo">JobH</p>
         </Link>
         <div className="nav-buttons">
           <Link href="/formPage">
-            <p className="nav-button">Form</p>
+            <button className="nav-button">Cover Letter Helper</button>
           </Link>
           <Link href="/questionsPage">
-            <p className="nav-button">Questions</p>
+            <button className="nav-button">Interview Prep Questions Helper</button>
           </Link>
         </div>
       </div>
