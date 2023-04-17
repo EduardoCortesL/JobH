@@ -1,67 +1,102 @@
 import { useState } from 'react';
+import { loadPdf } from '@/functions/textpdf';
+import QuestionsResponse from './questionResponse';
 
 
 const QuestionsComponent = () => {
   const [name, setName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [jobDescription, setJobDescription] = useState('');
-  const [resume, setResume] = useState(null);
   const [coverLetter, setCoverLetter] = useState(null);
-  const cLetterPrompt = "You are a cover letter generator.You will be given a job description along with the job applicant's resume.You will write a cover letter for the applicant that matches their past experiences from the resume with the job description.rather than simply outlining the applicant's past experiences, you will give more detail and explain how those experiences will help the applicant succeed in the new job.You will write the cover letter in a modern, professional style without being too formal, as a software developer might do naturally."
+  const [showForm, setShowForm] = useState(true);
+  const guidePrompt = "You are a interviewer for a company that I have applied. The focus is on engineering, based on the job description, my resume, the company name and position give me a set of 5 questions that I can use to practice for my interview. Also give me the answer for each one of the questions. "
   
   
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const requestBody = {
-      name,
-      companyName,
-      jobDescription,
-      cLetterPrompt,
-      resumeText,
+    const fileInput = document.getElementById('resume');
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    if(file instanceof Blob){
+      reader.readAsDataURL(file);
+    let base64String = '';
+    reader.onload = () => {
+      base64String = reader.result.split(',')[1];
+      loadPdf(base64String)
+        .then((text) => {
+          const requestBody = {
+            name,
+            companyName,
+            jobDescription,
+            guidePrompt,
+            resume: text,
+          };
+          console.log(requestBody);
+          return requestBody;
+        })
+        .then((requestBody) => {
+          fetch('/api/gpt', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+          })
+            .then((res) => res.json())
+            .then((result) => {
+              setCoverLetter(result.coverLetter);
+              setShowForm(false);
+            })
+            .catch((error) => {
+              console.log(`${error.message}`);
+            });
+        })
+        .catch((error) => {
+          console.log(`${error.message}`);
+        });
     };
-    console.log(requestBody);
-  
-    const res = await fetch('/api/gpt', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    });
-  
-    const result = await res.json();
-    setCoverLetter(result.coverLetter);
+  } else {
+    const alertBox = document.createElement('div');
+    alertBox.className = 'alert';
+    alertBox.innerHTML = 'Please upload a resume.';
+    document.body.appendChild(alertBox);
+    setTimeout(() => {
+      alertBox.remove();
+    }, 3000);
+  }
   };
   
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      <h2>Get Practice Questions</h2>
-      <div className="form-group">
-        <label htmlFor="name">Name:</label>
-        <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
-      </div>
-      <div className="form-group">
-        <label htmlFor="companyName">Company Name:</label>
-        <input type="text" id="companyName" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
-      </div>
-      <div className="form-group">
-        <label htmlFor="jobDescription">Job Description:</label>
-        <input type="text" id="jobDescription" value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} />
-      </div>
-      <div className="form-group">
-        <label htmlFor="resume">Resume:</label>
-        <input type="file" id="resume" onChange={(e) => setResume(e.target.files[0])} />
-      </div>
-      <button type="submit">Submit</button>
-      {coverLetter && (
+    <div>
+      {showForm ? (
+        <form onSubmit={handleSubmit} className="form-container">
+          <h2>Get Questions</h2>
+          <div className="form-group">
+            <label htmlFor="name">Name:</label>
+            <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="companyName">Company Name:</label>
+            <input type="text" id="companyName" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="jobDescription">Job Description:</label>
+            <input type="text" id="jobDescription" value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="resume">Resume:</label>
+            <input type="file" id="resume"/>
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      ) : (
         <div>
-          <h2>Generated Cover Letter:</h2>
-          <p>{coverLetter}</p>
+          <QuestionsResponse value={coverLetter} />
         </div>
       )}
-    </form>
+    </div>
   );
 };
 
