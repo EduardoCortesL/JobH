@@ -1,8 +1,7 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import { Inter } from 'next/font/google'
-import Form from '@/components/form'
 import Navbar from '@/components/navbar'
+import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,8 +16,11 @@ export default function Home() {
       </Head>
       <Navbar/>
       <main>
-      <h1>Welcome to JobH</h1>
-      <p>JobH is a tool to help your prep for your next job. Currently is in Alpha mode</p>
+        <h1 class="LpTitle">Welcome to JobH</h1>
+        <p class="LpPara">JobH is a tool to help your prep for your next job. Currently is in Alpha mode</p>
+        <Link href="/formPage">
+          <button class="LpButton">Get Started</button> 
+        </Link> 
       </main>
     </>
   )
